@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="An interactive, practical course for spotting phishing messages and fake websites."
+    />
+    <title>Pause. Verify. Proceed. | A phishing field guide</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+      :root {
+        color-scheme: light;
+        --ink: #17221e;
+        --muted: #64716b;
+        --paper: #f4f3ec;
+        --white: #fffef9;
+        --line: #d9ddd4;
+        --green: #136e53;
+        --green-soft: #e0eee7;
+        --orange: #f16440;
+        --orange-soft: #fbe6dc;
+        --blue: #345ca8;
+        --blue-soft: #e7edf8;
+        --mono: "DM Mono", Consolas, monospace;
+        --sans: "DM Sans", "Segoe UI", sans-serif;
+        --display: "Space Grotesk", "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+      button,
+      a {
+        font: inherit;
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #345ca8;
+        outline-offset: 3px;
+      }
+      .topbar {
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 5.5vw;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 254, 249, 0.88);
+      }
+      .brand {
+        display: flex;
+        gap: 11px;
+        align-items: center;
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 0;
+      }
+      .brand-mark {
+        width: 25px;
+        height: 25px;
+        background: var(--orange);
+        color: white;
+        display: grid;
+        place-items: center;
+        border-radius: 50% 50% 50% 4px;
+        font: 700 13px var(--mono);
+        transform: rotate(-8deg);
+      }
+      .top-meta {
+        color: var(--muted);
+        font: 12px var(--mono);
+        letter-spacing: 0;
+      }
+      .shell {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 36px 30px 64px;
+      }
+      .course-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 24px;
+        margin-bottom: 22px;
+      }
+      .eyebrow {
+        color: var(--green);
+        font: 500 11px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+      .course-head h1 {
+        font: 600 clamp(27px, 3vw, 38px)/1.1 var(--display);
+        letter-spacing: 0;
+        margin: 8px 0 0;
+      }
+      .head-note {
+        color: var(--muted);
+        font-size: 13px;
+        max-width: 255px;
+        margin: 0 0 4px;
+      }
+      .course-frame {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        min-height: 600px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        box-shadow: 0 14px 40px rgba(25, 41, 32, 0.055);
+      }
+      .rail {
+        border-right: 1px solid var(--line);
+        background: #fafaf5;
+        padding: 26px 18px;
+        display: flex;
+        flex-direction: column;
+      }
+      .rail-label {
+        font: 11px var(--mono);
+        color: #89938d;
+        text-transform: uppercase;
+        margin: 0 0 14px 8px;
+      }
+      .lesson-list {
+        display: grid;
+        gap: 5px;
+      }
+      .lesson-nav {
+        display: flex;
+        text-align: left;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 9px;
+        color: #69746e;
+        background: transparent;
+        border: 0;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 13px;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+      .lesson-nav:hover {
+        background: #f0f2eb;
+        color: var(--ink);
+      }
+      .lesson-nav[aria-current="step"] {
+        background: var(--green-soft);
+        color: var(--green);
+        font-weight: 700;
+      }
+      .lesson-num {
+        width: 25px;
+        height: 25px;
+        flex: 0 0 25px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        font: 11px var(--mono);
+        background: var(--white);
+      }
+      .lesson-nav[aria-current="step"] .lesson-num {
+        background: var(--green);
+        color: white;
+        border-color: var(--green);
+      }
+      .rail-tip {
+        margin: auto 7px 0;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .rail-tip strong {
+        display: block;
+        color: var(--ink);
+        font: 500 11px var(--mono);
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+      .stage {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .stage-top {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding: 0 34px;
+        color: var(--muted);
+        font: 11px var(--mono);
+      }
+      .stage-top span:last-child {
+        color: var(--green);
+      }
+      .slide {
+        display: none;
+        flex: 1;
+        padding: 34px clamp(24px, 5vw, 64px) 26px;
+        animation: enter 0.28s ease both;
+      }
+      .slide.active {
+        display: block;
+      }
+      @keyframes enter {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .slide h2 {
+        font: 600 clamp(28px, 3.2vw, 42px)/1.1 var(--display);
+        letter-spacing: 0;
+        margin: 8px 0 12px;
+        max-width: 690px;
+      }
+      .lead {
+        font-size: 15px;
+        color: var(--muted);
+        max-width: 650px;
+        margin: 0 0 25px;
+      }
+      .chapter {
+        color: var(--orange);
+        font: 500 11px var(--mono);
+        text-transform: uppercase;
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr 250px;
+        gap: 35px;
+        align-items: center;
+        margin: 42px 0 20px;
+      }
+      .hero-grid h2 {
+        font-size: clamp(39px, 5.2vw, 64px);
+        max-width: 520px;
+        margin-top: 12px;
+      }
+      .hero-grid .lead {
+        max-width: 475px;
+        font-size: 16px;
+      }
+      .stamp {
+        aspect-ratio: 1;
+        max-width: 220px;
+        justify-self: center;
+        width: 100%;
+        position: relative;
+        display: grid;
+        place-items: center;
+        border: 1px solid #cbd8ce;
+        border-radius: 50%;
+        color: var(--green);
+        background:
+          radial-gradient(circle at 50% 50%, #edf4ec 0 34%, transparent 35%),
+          repeating-radial-gradient(
+            circle at center,
+            transparent 0 35px,
+            #dce7dc 36px 37px
+          );
+      }
+      .stamp::before {
+        content: "";
+        position: absolute;
+        inset: 18%;
+        border: 1px dashed #a5bbae;
+        border-radius: 50%;
+      }
+      .stamp strong {
+        font: 600 30px var(--display);
+        z-index: 1;
+      }
+      .stamp small {
+        position: absolute;
+        bottom: 22%;
+        font: 10px var(--mono);
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .principle {
+        background: var(--ink);
+        color: white;
+        padding: 16px 20px;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-top: 25px;
+      }
+      .principle b {
+        color: #a7d8b9;
+        font: 500 11px var(--mono);
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .principle span {
+        font-size: 14px;
+      }
+      .mail-window {
+        border: 1px solid var(--line);
+        max-width: 700px;
+        margin: 22px 0 13px;
+        background: white;
+      }
+      .mail-bar {
+        display: flex;
+        gap: 5px;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #f7f8f4;
+      }
+      .mail-bar i {
+        width: 7px;
+        height: 7px;
+        background: #c7cec6;
+        border-radius: 50%;
+      }
+      .mail-content {
+        padding: 20px 22px 18px;
+      }
+      .mail-subject {
+        font: 600 16px var(--display);
+        margin: 0 0 14px;
+      }
+      .mail-from {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .avatar {
+        width: 29px;
+        height: 29px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: white;
+        background: var(--blue);
+        font: 11px var(--mono);
+      }
+      .mail-from strong {
+        color: var(--ink);
+      }
+      .mail-copy {
+        font-size: 13px;
+        max-width: 560px;
+        margin: 19px 0 13px;
+      }
+      .highlight {
+        background: var(--orange-soft);
+        box-shadow: 0 0 0 2px var(--orange-soft);
+      }
+      .mail-link {
+        display: inline-block;
+        color: var(--blue);
+        font-size: 12px;
+        text-decoration: underline;
+        margin: 3px 0 14px;
+      }
+      .mail-annotations {
+        max-width: 700px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .annotation {
+        border-top: 2px solid var(--orange);
+        padding: 9px 10px 0;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .annotation strong {
+        display: block;
+        color: var(--ink);
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+      .demo-note {
+        color: #87918b;
+        font: 10px var(--mono);
+        margin-top: 8px;
+      }
+      .url-demo {
+        max-width: 700px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1px solid var(--line);
+        margin: 23px 0 17px;
+      }
+      .url-side {
+        padding: 18px 20px;
+        min-width: 0;
+      }
+      .url-side + .url-side {
+        border-left: 1px solid var(--line);
+        background: #fafbf7;
+      }
+      .url-status {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        text-transform: uppercase;
+        font: 10px var(--mono);
+        margin-bottom: 11px;
+      }
+      .url-status.good {
+        color: var(--green);
+      }
+      .url-status.bad {
+        color: #bd4b2d;
+      }
+      .url-string {
+        display: block;
+        overflow-wrap: anywhere;
+        font: 12px/1.8 var(--mono);
+        color: var(--ink);
+      }
+      .url-string em {
+        font-style: normal;
+        color: var(--green);
+        font-weight: 500;
+      }
+      .url-string mark {
+        background: var(--orange-soft);
+        color: #a83e23;
+      }
+      .url-caption {
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .tactic-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 25px;
+        max-width: 730px;
+        margin-top: 25px;
+      }
+      .tactic {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 12px;
+        padding: 15px 0;
+        border-top: 1px solid var(--line);
+      }
+      .tactic-icon {
+        width: 31px;
+        height: 31px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--blue);
+        background: var(--blue-soft);
+        font: 12px var(--mono);
+      }
+      .tactic h3,
+      .defense h3 {
+        margin: 0 0 4px;
+        font: 600 14px var(--display);
+      }
+      .tactic p,
+      .defense p {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 0;
+      }
+      .case-study {
+        max-width: 720px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        margin: 23px 0;
+      }
+      .case-year {
+        background: var(--blue-soft);
+        color: var(--blue);
+        padding: 20px 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font: 11px var(--mono);
+      }
+      .case-year strong {
+        font: 600 25px var(--display);
+      }
+      .case-copy {
+        padding: 18px 23px;
+      }
+      .case-copy h3 {
+        font: 600 17px var(--display);
+        margin: 0 0 6px;
+      }
+      .case-copy p {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0;
+      }
+      .case-label {
+        color: var(--orange);
+        font: 10px var(--mono);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .defense-list {
+        max-width: 730px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 27px;
+        margin: 21px 0 0;
+      }
+      .defense {
+        border-top: 1px solid var(--line);
+        padding: 13px 0 14px;
+      }
+      .defense-index {
+        color: var(--green);
+        font: 11px var(--mono);
+        margin-bottom: 5px;
+      }
+      .quiz-progress {
+        font: 11px var(--mono);
+        color: var(--muted);
+        margin: 20px 0 7px;
+      }
+      .quiz-question {
+        max-width: 700px;
+        padding: 18px 0 15px;
+        border-top: 1px solid var(--line);
+      }
+      .quiz-question h3 {
+        font: 600 16px/1.4 var(--display);
+        margin: 0 0 12px;
+      }
+      .options {
+        display: grid;
+        gap: 7px;
+      }
+      .option {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        padding: 10px 13px;
+        text-align: left;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        transition:
+          border 0.15s ease,
+          background 0.15s ease;
+      }
+      .option:hover:not(:disabled) {
+        border-color: #94aa9c;
+        background: #fafcf8;
+      }
+      .option:disabled {
+        cursor: default;
+        color: var(--ink);
+        opacity: 1;
+      }
+      .option.correct {
+        border-color: var(--green);
+        background: var(--green-soft);
+      }
+      .option.incorrect {
+        border-color: #cf6547;
+        background: var(--orange-soft);
+      }
+      .option-letter {
+        width: 19px;
+        height: 19px;
+        flex: 0 0 19px;
+        border: 1px solid #cdd4cc;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font: 10px var(--mono);
+      }
+      .feedback {
+        min-height: 19px;
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .feedback.good {
+        color: var(--green);
+      }
+      .feedback.bad {
+        color: #a83e23;
+      }
+      .quiz-result {
+        display: none;
+        max-width: 700px;
+        padding: 16px 18px;
+        margin-top: 13px;
+        background: var(--green-soft);
+        border-left: 3px solid var(--green);
+      }
+      .quiz-result.visible {
+        display: block;
+        animation: enter 0.25s ease both;
+      }
+      .quiz-result strong {
+        font: 600 17px var(--display);
+      }
+      .quiz-result p {
+        font-size: 12px;
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+      .stage-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--line);
+        padding: 15px 28px;
+        margin-top: 22px;
+      }
+      .stage-controls button {
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        cursor: pointer;
+        padding: 9px 13px;
+        font-size: 12px;
+        border-radius: 2px;
+      }
+      .stage-controls button:hover:not(:disabled) {
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .stage-controls button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      #nextButton {
+        border-color: var(--green);
+        background: var(--green);
+        color: white;
+      }
+      #nextButton:hover:not(:disabled) {
+        background: #0d5942;
+        color: white;
+      }
+      .key-hint {
+        color: #929b95;
+        font: 10px var(--mono);
+      }
+      .footer-note {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding-top: 17px;
+        color: #7c8780;
+        font-size: 11px;
+      }
+      .footer-note a {
+        color: var(--green);
+      }
+      @media (max-width: 760px) {
+        .topbar {
+          height: 58px;
+          padding: 0 18px;
+        }
+        .top-meta {
+          font-size: 10px;
+        }
+        .shell {
+          padding: 25px 14px 40px;
+        }
+        .course-head {
+          align-items: start;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+        .head-note {
+          max-width: none;
+        }
+        .course-frame {
+          display: block;
+          min-height: 0;
+        }
+        .rail {
+          padding: 11px 12px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .rail-label,
+        .rail-tip {
+          display: none;
+        }
+        .lesson-list {
+          display: flex;
+          overflow-x: auto;
+          gap: 5px;
+          scrollbar-width: thin;
+        }
+        .lesson-nav {
+          flex: 0 0 auto;
+          padding: 7px 9px;
+          font-size: 11px;
+        }
+        .lesson-num {
+          width: 22px;
+          height: 22px;
+          flex-basis: 22px;
+        }
+        .stage-top {
+          height: 40px;
+          padding: 0 17px;
+          font-size: 10px;
+        }
+        .slide {
+          padding: 27px 20px 20px;
+        }
+        .hero-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 27px;
+        }
+        .hero-grid h2 {
+          font-size: 48px;
+        }
+        .stamp {
+          width: 132px;
+          justify-self: start;
+          margin: 10px 0;
+        }
+        .stamp strong {
+          font-size: 23px;
+        }
+        .principle {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 5px;
+        }
+        .mail-content {
+          padding: 15px;
+        }
+        .mail-annotations {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .annotation {
+          padding-top: 6px;
+        }
+        .url-demo {
+          grid-template-columns: 1fr;
+        }
+        .url-side + .url-side {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+        }
+        .tactic-grid,
+        .defense-list {
+          grid-template-columns: 1fr;
+        }
+        .case-study {
+          grid-template-columns: 82px 1fr;
+        }
+        .case-year {
+          padding: 13px 9px;
+        }
+        .case-year strong {
+          font-size: 20px;
+        }
+        .case-copy {
+          padding: 14px;
+        }
+        .stage-controls {
+          padding: 12px 15px;
+        }
+        .key-hint {
+          display: none;
+        }
+        .footer-note {
+          flex-direction: column;
+          gap: 4px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">P</span> FIELDNOTES
+        <span style="font: 400 11px var(--mono); color: #7a857e"
+          >/ SECURITY</span
+        >
+      </div>
+      <div class="top-meta">A 7-MINUTE INTERACTIVE MODULE</div>
+    </header>
+
+    <main class="shell">
+      <div class="course-head">
+        <div>
+          <div class="eyebrow">Digital self-defense · 01</div>
+          <h1>Phishing: spot the hook.</h1>
+        </div>
+        <p class="head-note">
+          A practical field guide to suspicious messages, deceptive pages, and
+          the pressure tactics behind them.
+        </p>
+      </div>
+
+      <section class="course-frame" aria-label="Phishing awareness course">
+        <aside class="rail">
+          <p class="rail-label">Your route</p>
+          <nav class="lesson-list" aria-label="Course sections">
+            <button class="lesson-nav" data-slide="0" aria-current="step">
+              <span class="lesson-num">00</span>Start here
+            </button>
+            <button class="lesson-nav" data-slide="1">
+              <span class="lesson-num">01</span>Read the message
+            </button>
+            <button class="lesson-nav" data-slide="2">
+              <span class="lesson-num">02</span>Check the website
+            </button>
+            <button class="lesson-nav" data-slide="3">
+              <span class="lesson-num">03</span>Know the playbook
+            </button>
+            <button class="lesson-nav" data-slide="4">
+              <span class="lesson-num">04</span>Make it harder
+            </button>
+            <button class="lesson-nav" data-slide="5">
+              <span class="lesson-num">05</span>Quick check
+            </button>
+          </nav>
+          <div class="rail-tip">
+            <strong>Keep in mind</strong>Legitimate organizations can send
+            unexpected messages too. Verify the request through a separate,
+            trusted route.
+          </div>
+        </aside>
+
+        <div class="stage">
+          <div class="stage-top">
+            <span id="stageLabel">ORIENTATION</span
+            ><span id="progressText">01 / 06</span>
+          </div>
+
+          <article class="slide active" data-label="ORIENTATION">
+            <div class="hero-grid">
+              <div>
+                <span class="chapter">A field guide for the inbox</span>
+                <h2>
+                  Pause.<br />Verify.<br /><span style="color: var(--green)"
+                    >Proceed.</span
+                  >
+                </h2>
+                <p class="lead">
+                  Phishing is a message designed to make you reveal information,
+                  send money, or open a door to your device. The bait changes.
+                  The pressure usually doesn’t.
+                </p>
+                <button
+                  class="stage-start"
+                  type="button"
+                  onclick="goTo(1)"
+                  style="
+                    padding: 11px 16px;
+                    border: 0;
+                    background: var(--green);
+                    color: white;
+                    font: 500 12px var(--sans);
+                    cursor: pointer;
+                  "
+                >
+                  Begin the field guide <span aria-hidden="true">→</span>
+                </button>
+              </div>
+              <div class="stamp" aria-label="Pause, verify, proceed">
+                <strong>3 sec</strong><small>before you click</small>
+              </div>
+            </div>
+            <div class="principle">
+              <b>The useful rule</b
+              ><span
+                >Unexpected + urgent + asks for action? Stop. Verify using a
+                contact method you already trust.</span
+              >
+            </div>
+          </article>
+
+          <article class="slide" data-label="EMAIL CLUES">
+            <span class="chapter">01 / Read the message</span>
+            <h2>Read past the display name.</h2>
+            <p class="lead">
+              Attackers borrow familiar brands and plausible situations. Look at
+              the full sender address, the request, and where each link actually
+              leads.
+            </p>
+            <div
+              class="mail-window"
+              aria-label="Example suspicious email with highlighted warning signs"
+            >
+              <div class="mail-bar"><i></i><i></i><i></i></div>
+              <div class="mail-content">
+                <p class="mail-subject">
+                  Action required: your mailbox will be closed today
+                </p>
+                <div class="mail-from">
+                  <span class="avatar">IT</span
+                  ><span
+                    ><strong>IT Help Desk</strong> &lt;helpdesk@<span
+                      class="highlight"
+                      >company-support-login</span
+                    >.com&gt;<br />to: you · 9:14 AM</span
+                  >
+                </div>
+                <p class="mail-copy">
+                  We detected unusual activity. Your access will be
+                  <span class="highlight"
+                    >permanently suspended in 30 minutes</span
+                  >. Confirm your password now to keep your account active.
+                </p>
+                <a
+                  class="mail-link"
+                  href="#email-example"
+                  onclick="return false;"
+                  >Review account →
+                  <span class="highlight">company-support-login.com</span></a
+                >
+                <div style="font-size: 11px; color: #89938d">
+                  IT Support Team
+                </div>
+              </div>
+            </div>
+            <div class="mail-annotations">
+              <div class="annotation">
+                <strong>Lookalike sender</strong>The name says “IT Help Desk,”
+                but the domain is not your organization’s.
+              </div>
+              <div class="annotation">
+                <strong>Artificial urgency</strong>A short deadline tries to
+                replace careful thinking with panic.
+              </div>
+              <div class="annotation">
+                <strong>Credential request</strong>Legitimate support should not
+                ask you to confirm a password through an email link.
+              </div>
+            </div>
+            <p class="demo-note">
+              TRAINING EXAMPLE · This message is fictional; the warning signs
+              are common.
+            </p>
+          </article>
+
+          <article class="slide" data-label="WEBSITE CHECKS">
+            <span class="chapter">02 / Check the website</span>
+            <h2>A lock is not a verdict.</h2>
+            <p class="lead">
+              HTTPS encrypts a connection; it does not prove who owns the site.
+              Read the domain from right to left and check the exact spelling
+              before entering anything.
+            </p>
+            <div
+              class="url-demo"
+              aria-label="Comparison of a legitimate and lookalike website address"
+            >
+              <div class="url-side">
+                <span class="url-status good">● &nbsp;Expected domain</span
+                ><code class="url-string"
+                  >https://<em>accounts.example.com</em>/sign-in</code
+                >
+                <p class="url-caption">
+                  The registered domain is <strong>example.com</strong>.
+                </p>
+              </div>
+              <div class="url-side">
+                <span class="url-status bad">● &nbsp;Lookalike domain</span
+                ><code class="url-string"
+                  >https://<mark>example.com.login-check</mark>.net/sign-in</code
+                >
+                <p class="url-caption">
+                  The registered domain is <strong>login-check.net</strong>, not
+                  example.com.
+                </p>
+              </div>
+            </div>
+            <div class="tactic-grid" style="margin-top: 13px">
+              <div class="tactic">
+                <span class="tactic-icon">A</span>
+                <div>
+                  <h3>Inspect the real address</h3>
+                  <p>
+                    Hover over a link on desktop or press and hold on mobile to
+                    preview it. Better: navigate using a bookmark or typed
+                    address.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">B</span>
+                <div>
+                  <h3>Watch for subtle swaps</h3>
+                  <p>
+                    Extra words, misspellings, hyphens, odd subdomains, and
+                    lookalike characters can disguise a domain.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">C</span>
+                <div>
+                  <h3>Question the context</h3>
+                  <p>
+                    A sign-in page reached from an unexpected attachment or
+                    message deserves a second look.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">D</span>
+                <div>
+                  <h3>Use a second signal</h3>
+                  <p>
+                    Check with the organization through its known app, saved
+                    number, or official site, not the message’s contact details.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="slide" data-label="SOCIAL ENGINEERING">
+            <span class="chapter">03 / Know the playbook</span>
+            <h2>They target attention, not just software.</h2>
+            <p class="lead">
+              Social engineering uses human instincts to get around good
+              technical defenses. Notice what the message is trying to make you
+              feel.
+            </p>
+            <div class="tactic-grid">
+              <div class="tactic">
+                <span class="tactic-icon">!</span>
+                <div>
+                  <h3>Urgency & fear</h3>
+                  <p>
+                    “Your account closes in 10 minutes.” Pressure makes
+                    verification feel too slow.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">★</span>
+                <div>
+                  <h3>Authority</h3>
+                  <p>
+                    “The CEO needs gift cards now.” A familiar title is used to
+                    discourage questions.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">$</span>
+                <div>
+                  <h3>Reward & curiosity</h3>
+                  <p>
+                    Unexpected refunds, prizes, invoices, or “private” documents
+                    invite a quick click.
+                  </p>
+                </div>
+              </div>
+              <div class="tactic">
+                <span class="tactic-icon">↗</span>
+                <div>
+                  <h3>Familiarity & routine</h3>
+                  <p>
+                    Delivery updates, shared files, payroll notices, and renewal
+                    reminders blend into the day.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="case-study">
+              <div class="case-year">
+                <span>REPORTED CASE</span><strong>2020</strong>
+              </div>
+              <div class="case-copy">
+                <span class="case-label">Real-world example · Twitter</span>
+                <h3>A phone call can be the phishing message.</h3>
+                <p>
+                  Attackers used social engineering against employees to gain
+                  access to internal tools, then took over high-profile
+                  accounts. The incident showed that a convincing human request
+                  can bypass safeguards even when no fake website is involved.
+                </p>
+              </div>
+            </div>
+            <p class="demo-note">
+              The incident is summarized from public reporting; examples above
+              are common patterns, not quotes from the case.
+            </p>
+          </article>
+
+          <article class="slide" data-label="EVERYDAY DEFENSES">
+            <span class="chapter">04 / Make it harder</span>
+            <h2>Build a small pause into the routine.</h2>
+            <p class="lead">
+              No single clue catches every attempt. A few reliable habits make
+              stolen passwords and rushed decisions much less useful to an
+              attacker.
+            </p>
+            <div class="case-study" style="margin-top: 15px">
+              <div
+                class="case-year"
+                style="background: var(--orange-soft); color: #a83e23"
+              >
+                <span>REPORTED CASE</span><strong>2013–15</strong>
+              </div>
+              <div class="case-copy">
+                <span class="case-label"
+                  >Real-world example · Business email compromise</span
+                >
+                <h3>Familiar invoices, changed bank details.</h3>
+                <p>
+                  Fraudsters impersonated suppliers and sent forged invoices to
+                  Google and Facebook. The companies paid more than $100 million
+                  before the scheme was uncovered; U.S. authorities later
+                  announced the case. Verify payment changes using a known phone
+                  number, never just a reply to the email.
+                </p>
+              </div>
+            </div>
+            <div class="defense-list">
+              <div class="defense">
+                <div class="defense-index">01 / VERIFY</div>
+                <h3>Change channels</h3>
+                <p>
+                  Call a known number or open the official app. Never use
+                  contact details supplied in the suspicious message.
+                </p>
+              </div>
+              <div class="defense">
+                <div class="defense-index">02 / PROTECT</div>
+                <h3>Use a password manager</h3>
+                <p>
+                  It can help spot lookalike domains by refusing to autofill
+                  where your real login belongs.
+                </p>
+              </div>
+              <div class="defense">
+                <div class="defense-index">03 / ADD A FACTOR</div>
+                <h3>Turn on MFA or passkeys</h3>
+                <p>
+                  Prefer phishing-resistant passkeys or security keys where
+                  available. Never share a one-time sign-in code.
+                </p>
+              </div>
+              <div class="defense">
+                <div class="defense-index">04 / REPORT</div>
+                <h3>Flag it, then delete</h3>
+                <p>
+                  Use your organization’s report-phishing button or official
+                  reporting channel. Don’t forward suspicious links casually.
+                </p>
+              </div>
+              <div class="defense">
+                <div class="defense-index">05 / IF YOU CLICKED</div>
+                <h3>Act quickly, without shame</h3>
+                <p>
+                  Tell your IT/security team or provider. Change reused
+                  passwords from a trusted device and revoke active sessions.
+                </p>
+              </div>
+              <div class="defense">
+                <div class="defense-index">06 / BEFORE PAYING</div>
+                <h3>Confirm high-risk requests</h3>
+                <p>
+                  Verify new bank details, gift card requests, and urgent
+                  transfers through a separate established channel.
+                </p>
+              </div>
+            </div>
+            <p class="demo-note">
+              Case summary: U.S. Department of Justice public announcement
+              concerning forged invoices and business email compromise.
+            </p>
+          </article>
+
+          <article class="slide" data-label="QUICK CHECK">
+            <span class="chapter">05 / Quick check</span>
+            <h2>Three decisions. No trick wording.</h2>
+            <p class="lead">
+              Choose the best next step. Feedback appears after each answer.
+            </p>
+            <div id="quiz">
+              <div
+                class="quiz-question"
+                data-answer="1"
+                data-explanation="A known number gives you an independent way to verify the request. A caller ID or number in the message can be spoofed."
+              >
+                <h3>
+                  1. Your manager texts from a new number asking you to buy gift
+                  cards urgently. What now?
+                </h3>
+                <div class="options">
+                  <button class="option">
+                    <span class="option-letter">A</span>Buy them, then send the
+                    codes to save time.</button
+                  ><button class="option">
+                    <span class="option-letter">B</span>Verify with your manager
+                    using a number or channel you already know.</button
+                  ><button class="option">
+                    <span class="option-letter">C</span>Reply asking them to
+                    prove it by sharing their password.
+                  </button>
+                </div>
+                <p class="feedback" aria-live="polite"></p>
+              </div>
+              <div
+                class="quiz-question"
+                data-answer="2"
+                data-explanation="HTTPS encrypts the connection; it does not establish that a site is the real service. The registered domain here is account-verify.net."
+              >
+                <h3>
+                  2. A sign-in page shows a padlock, but the address is
+                  <code style="font: 12px var(--mono)"
+                    >bank.example.account-verify.net</code
+                  >. What does that tell you?
+                </h3>
+                <div class="options">
+                  <button class="option">
+                    <span class="option-letter">A</span>It is safe because the
+                    browser shows a padlock.</button
+                  ><button class="option">
+                    <span class="option-letter">B</span>The bank owns it because
+                    its name appears in the address.</button
+                  ><button class="option">
+                    <span class="option-letter">C</span>The registered domain is
+                    account-verify.net; don’t sign in through this link.
+                  </button>
+                </div>
+                <p class="feedback" aria-live="polite"></p>
+              </div>
+              <div
+                class="quiz-question"
+                data-answer="0"
+                data-explanation="Report it through the approved channel so the right people can investigate. If you already entered credentials, report that immediately and change them from a trusted device."
+              >
+                <h3>
+                  3. You clicked a suspicious link but did not enter anything.
+                  What is the best next step?
+                </h3>
+                <div class="options">
+                  <button class="option">
+                    <span class="option-letter">A</span>Report it through your
+                    organization’s security channel and follow its guidance.</button
+                  ><button class="option">
+                    <span class="option-letter">B</span>Ignore it; clicking can
+                    never matter unless you typed a password.</button
+                  ><button class="option">
+                    <span class="option-letter">C</span>Forward the link to
+                    colleagues and ask if it looks real.
+                  </button>
+                </div>
+                <p class="feedback" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="quiz-result" id="quizResult" role="status">
+              <strong id="resultTitle"></strong>
+              <p id="resultText"></p>
+            </div>
+          </article>
+
+          <div class="stage-controls">
+            <button type="button" id="prevButton" disabled>
+              ← &nbsp;Previous
+            </button>
+            <span class="key-hint">TIP: USE ← → KEYS</span>
+            <button type="button" id="nextButton">Next &nbsp;→</button>
+          </div>
+        </div>
+      </section>
+      <div class="footer-note">
+        <span>Pause before the click. Verify outside the message.</span
+        ><span
+          >Stay current: follow your organization’s security guidance.</span
+        >
+      </div>
+    </main>
+
+    <script>
+      const slides = [...document.querySelectorAll(".slide")];
+      const navButtons = [...document.querySelectorAll(".lesson-nav")];
+      const prevButton = document.getElementById("prevButton");
+      const nextButton = document.getElementById("nextButton");
+      let currentSlide = 0;
+
+      function goTo(index) {
+        currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+        slides.forEach((slide, position) =>
+          slide.classList.toggle("active", position === currentSlide),
+        );
+        navButtons.forEach((button, position) => {
+          if (position === currentSlide)
+            button.setAttribute("aria-current", "step");
+          else button.removeAttribute("aria-current");
+        });
+        document.getElementById("stageLabel").textContent =
+          slides[currentSlide].dataset.label;
+        document.getElementById("progressText").textContent =
+          `${String(currentSlide + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+        prevButton.disabled = currentSlide === 0;
+        nextButton.textContent =
+          currentSlide === slides.length - 1 ? "Start again ↻" : "Next  →";
+        document
+          .querySelector(".stage")
+          .scrollIntoView({ block: "start", behavior: "smooth" });
+      }
+
+      navButtons.forEach((button) =>
+        button.addEventListener("click", () =>
+          goTo(Number(button.dataset.slide)),
+        ),
+      );
+      prevButton.addEventListener("click", () => goTo(currentSlide - 1));
+      nextButton.addEventListener("click", () =>
+        goTo(currentSlide === slides.length - 1 ? 0 : currentSlide + 1),
+      );
+      document.addEventListener("keydown", (event) => {
+        if (
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          ["INPUT", "TEXTAREA", "BUTTON"].includes(
+            document.activeElement.tagName,
+          )
+        )
+          return;
+        if (event.key === "ArrowRight") goTo(currentSlide + 1);
+        if (event.key === "ArrowLeft") goTo(currentSlide - 1);
+      });
+
+      let answered = 0;
+      let score = 0;
+      document.querySelectorAll(".quiz-question").forEach((question) => {
+        const options = [...question.querySelectorAll(".option")];
+        const feedback = question.querySelector(".feedback");
+        options.forEach((option, index) =>
+          option.addEventListener("click", () => {
+            if (options.some((item) => item.disabled)) return;
+            const correct = index === Number(question.dataset.answer);
+            option.classList.add(correct ? "correct" : "incorrect");
+            options.forEach((item) => {
+              item.disabled = true;
+            });
+            if (correct) score += 1;
+            answered += 1;
+            feedback.textContent = `${correct ? "Correct. " : "Not quite. "}${question.dataset.explanation}`;
+            feedback.classList.add(correct ? "good" : "bad");
+            if (
+              answered === document.querySelectorAll(".quiz-question").length
+            ) {
+              const result = document.getElementById("quizResult");
+              document.getElementById("resultTitle").textContent =
+                `${score} / 3 — ${score === 3 ? "Field-ready." : score === 2 ? "Good instincts." : "Worth a second look."}`;
+              document.getElementById("resultText").textContent =
+                "The reliable habit is the same in every scenario: stop, verify through a separate trusted channel, and report suspicious activity promptly.";
+              result.classList.add("visible");
+            }
+          }),
+        );
+      });
+    </script>
+  </body>
+</html>
